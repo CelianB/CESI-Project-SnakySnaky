@@ -1,2 +1,1 @@
-Projet de crous Python.
-Jeu Shooter.
+Projet de cesi Python.
