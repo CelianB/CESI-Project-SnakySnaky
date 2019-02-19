@@ -1,7 +1,15 @@
 import socket
 import sys
 import traceback
+import os;
+
 from threading import Thread
+
+cwd = os.getcwd() + "\\util"
+sys.path.append(cwd)
+from config import ConfigHandler
+
+config_general = ConfigHandler('configs', False, 'config.ini', '')
 
 
 def main():
@@ -9,8 +17,8 @@ def main():
 
 
 def start_server():
-    host = "127.0.0.1"
-    port = 1111
+    host = config_general.getStr("ServerIP")
+    port = config_general.getStr("ServerPort")
 
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
