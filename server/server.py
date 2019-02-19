@@ -3,7 +3,7 @@ import threading
 import sys
 import os
 
-cwd = os.getcwd() + "/util/"
+cwd = os.getcwd() + "\\util"
 sys.path.append(cwd)
 
 from util.config import ConfigHandler
