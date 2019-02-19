@@ -1,4 +1,4 @@
-class my_class(object):
+class resultObjet(object):
 
     #Constructeur
     def __init__(self, name, position, alive, score):
@@ -8,8 +8,29 @@ class my_class(object):
         self.alive = alive
         self.score = score
 
-    
+    def getName():
+        return self.name
 
+    def getPosition():
+        return self.position
+
+    def getAlive():
+        return self.alive
+
+    def getScore():
+        return self.score
+
+    def setName(name):
+        self.name = name
+
+    def setPosition():
+        self.name = position
+
+    def setAlive():
+        self.name = alive
+
+    def setScore():
+        self.name = score
 
     #"""EXEMPLE"""
     #{
