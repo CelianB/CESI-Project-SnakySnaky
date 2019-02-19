@@ -22,6 +22,13 @@ class Window:
 		self.running = True
 		self.input_manager = InputManager(self)
 		self.fps_target = fps_target
+		self.base_title = title
+
+	def getBaseTitle(self):
+		return self.base_title
+
+	def getFrame(self):
+		return self.frame
 
 	def _default_input(self, event):
 		if event.type == QUIT:
@@ -45,7 +52,7 @@ class Window:
 				self.on_input(event)
 
 			# TODO: calculate delta time
-			self.on_update(1000 / self.fps_target)
+			self.on_update(self.fps_target / 1000)
 
 			# Clear frame
 			self.frame.fill((0, 0, 0))

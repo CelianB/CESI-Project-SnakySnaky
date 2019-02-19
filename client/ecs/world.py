@@ -1,3 +1,4 @@
+from .components import TransformComponent
 from .entity import Entity
 
 class World:
@@ -9,10 +10,11 @@ class World:
 		self.component_to_entities = {} # component_class => entity[]
 		self.entities = {} # entity_id => entity
 
-	def createEntity(self):
+	def createEntity(self, position, rotation, scale):
 		print('World:createEntity')
 		entity = Entity(self)
 		self.entity_to_components[entity] = []
+		self._associate(entity, TransformComponent(position, rotation, scale))
 		return entity
 
 	def update(self):
