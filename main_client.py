@@ -3,15 +3,8 @@
 
 import client
 
-def on_input(event):
-	print('On input')
-
-def on_update():
-	print('On update')
-
-def on_render():
-	print('On render')
+game = client.Game()
 
 win = client.Window('Cobra', 800, 600, 30)
 
-win.run(input=on_input, update=on_update, render=on_render)
+win.run(input=game.on_input, update=game.on_update, render=game.on_render)
