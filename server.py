@@ -42,7 +42,6 @@ def start_server():
         except:
             print("Thread did not start.")
             traceback.print_exc()
-
     soc.close()
 
 
