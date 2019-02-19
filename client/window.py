@@ -44,11 +44,12 @@ class Window:
 			for event in pygame.event.get():
 				self.on_input(event)
 
-			self.on_update()
+			# TODO: calculate delta time
+			self.on_update(1000 / self.fps_target)
 
 			# Clear frame
 			self.frame.fill((0, 0, 0))
-			self.on_render()
+			self.on_render(self.frame)
 
 			clock.tick(self.fps_target)
 			pygame.display.update()
