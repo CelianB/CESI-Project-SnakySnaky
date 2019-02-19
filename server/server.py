@@ -1,5 +1,12 @@
 import socket
 import threading
+import sys
+import os
+
+cwd = os.getcwd() + "/util/"
+sys.path.append(cwd)
+
+from util.config import ConfigHandler
 
 class ClientThread(threading.Thread):
 
@@ -22,9 +29,12 @@ class ClientThread(threading.Thread):
 
         print("Client déconnecté...")
 
+
+config_general = ConfigHandler('configs', False, 'config.ini', '')
+
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-tcpsock.bind(("127.0.0.1",1111))
+tcpsock.bind((config_general.getStr("ServerIP"),config_general.getStr("ServerPort")))
 
 while True:
     tcpsock.listen(10)
