@@ -125,6 +125,6 @@ class Game:
 							img = 'tail'
 						else:
 							img = 'straight'
-					if r:
+					if r is not None:
 						self.graphics.drawImage(self.graphics.rotateImage(behaviour_cmp.sprites[img], r), (pos[0] * cell_size[0], pos[1] * cell_size[1]))
 			self.world.get(onEachSpriteRenderer, components=[TransformComponent, SnakeMovementComponent, SnakeBehaviourComponent, SpriteRenderer])
