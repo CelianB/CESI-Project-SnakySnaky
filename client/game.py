@@ -29,12 +29,16 @@ class Game:
 		self.updates_wainting = 0
 		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
 
+		# windows creation
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
+		# bus event handler
 		self.event_bus = event_bus
 
+		# background entity creation
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))
 
+		# snake entity creation
 		self.snake = self.world.createEntity(Vector2(20, 20))
 		self.snake.assign(SpriteRendererComponent(self.graphics, 'mini_snake.png'))
 		self.snake.assign(SnakeMovementComponent())
