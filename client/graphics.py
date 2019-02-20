@@ -1,3 +1,4 @@
+# Florian Hervieux
 import pygame
 
 class Graphics:

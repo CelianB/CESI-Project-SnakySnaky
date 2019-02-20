@@ -1,3 +1,4 @@
+# Florian Hervieux
 from math import *
 from .util import format_number
 

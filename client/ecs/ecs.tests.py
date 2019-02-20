@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-5
+# Florian Hervieux
 from client.ecs.world import World
 from client.ecs.components import Component, TransformComponent, GravityComponent
 from vector2 import Vector2
