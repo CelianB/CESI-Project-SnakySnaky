@@ -49,7 +49,7 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
 
     while is_active:
-        client_input = receive_input(connection, max_buffer_size)
+        myResultObjet = receive_input(connection, max_buffer_size)
 
         if "--QUIT--" in client_input:
             print("Client is requesting to quit")
@@ -69,9 +69,14 @@ def receive_input(connection, max_buffer_size):
         print("The input size is greater than expected {}".format(client_input_size))
 
     decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
-    result = process_input(decoded_input)
+    myResultObjet = decode_transmission(decoded_input)
 
-    return result
+    return myResultObjet
+
+
+def decode_transmission(decoded_input):
+    
+    pass
 
 
 def process_input(id_client, input_enum_int):
@@ -104,7 +109,7 @@ def process_input(id_client, input_enum_int):
         position[0][0] += 1
 
     #dicoResultObjet[id_client].setPosition
-    myResultObjet(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
+    return myResultObjet(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
 
 
 if __name__ == "__main__":
