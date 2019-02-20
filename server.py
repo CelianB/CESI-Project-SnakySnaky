@@ -1,5 +1,7 @@
 #Auteur : Nathan W.   / Adrien M.
 import socket
+import select
+import uuid
 import sys
 import traceback
 import json
@@ -13,18 +15,17 @@ from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
 
-def main():
-    start_server()
+server_running = True
+dicoSocketClients = {}
+client_index = 0
 
 
 def start_server():
-    # host = "127.0.0.1"
-    # port =1111
-    host = config_general.getStr("ServerIP")
-    port = config_general.getInt("ServerPort")
+    print('Initializing server')
+    host = config_general.getStr('ServerIP')
+    port = config_general.getInt('ServerPort')
 
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     print("Socket created")
     try:
         soc.bind((host, port))
@@ -32,14 +33,10 @@ def start_server():
         print("Bind failed. Error : " + str(sys.exc_info()))
         sys.exit()
 
-    soc.listen(5) # Maximum de 5 utilisateurs
-    print("Socket now listening")
+    soc.listen(5) # 5 connections max at the same time
+    print('Socket now listening...')
 
     # Boucle infinie - ne se reset pas à chaques nouveaux clients
-    global dicoSocketClients
-    dicoSocketClients = {}    
-    id = 1
-
     global dicoResultObjet  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
     
     #initialisation temporairement en dur des serpents
@@ -51,86 +48,45 @@ def start_server():
 
 
     # Infinite while - Do not reset request
-    while True:
-        connection, address = soc.accept()
-        ip, port = str(address[0]), str(address[1])
-        print("Connected with " + ip + ":" + port)
-        
-        dicoSocketClients = [connection, id]
-        id += 1
+    while server_running:
+        dem_connex, wlist, xlist = select.select([cnt_serv], [], [], 0.01)
+        for connexion in dem_connex:
+			recep, infos = connexion.accept()
+            client_index += 1
+			dicoSocketClients[recep] = client_index
+            print('Connected with: ' + str(infos))
 
-        try:
-            Thread(target=client_thread, args=(connection, ip, port)).start()            
-        except:
-            print("Thread did not start.")
-            traceback.print_exc()
-    soc.close()
-
-# Thread loop
-def client_thread(connection, ip, port, max_buffer_size = 5120):
-    is_active = True
-
-    while is_active:
-        client_input = receive_input(connection, max_buffer_size)
-
-        if client_input == "QUIT":
-            print("Client is requesting to quit")
-            connection.close()
-            print("Connection " + ip + ":" + port + " closed")
-            is_active = False
+        clientsMAJ = []
+		try:
+			clientsMAJ, wlist, xlist = select.select(dicoSocketClients.keys(), [], [], 0.01)
+		except select.error:
+			pass
         else:
-            print("Processed result: {}".format(client_input))
-            connection.sendall("-".encode("utf8"))
+			try:
+                for client in clientsMAJ:
+					msg = client.recv(5120)
+                    msg = json.loads(msg)
+                    treatMessage(client, msg)
+                    if len(msg.decode()) > 1:
+						print(msg.decode())
+			except:
+				pass
 
+    soc.close()
+    print('Closed')
 
-# Receive input from client
-def receive_input(connection, max_buffer_size):
+def treatMessage(connection, msg):
+    if msg['type'] == 'move':
+        directionEnum = int(msg['direction'])
+        process_input(dicoSocketClients[connection], directionEnum)
+    elif msg['type'] == 'quit':
+        print('Client is requesting to quit')
+        connection.close()
 
-#Adrien / Nathan
-
-    client_input = connection.recv(max_buffer_size)
-    client_input_size = sys.getsizeof(client_input)
-
-    if client_input_size > max_buffer_size:
-        print("The input size is greater than expected {}".format(client_input_size))    
-
-    try:
-        decoded_input = client_input.decode()  # decode and strip end of line
-        print(str(decoded_input))
-        print(str(connection))
-
-        id_client = dicoSocketClients.get(connection)
-        myResultObjet = decode_transmission(decoded_input, id_client)
-    except:
-        print("Bind failed. Error : " + str(sys.exc_info()))
-        sys.exit()
-    
-    # myResultObjet = decode_transmission(decoded_input)
-
-    return client_input
-
-
-def decode_transmission(decoded_input, id_client):
-   
-#Auteur : Adrien M.    
-
-    deserialized_object = json.loads(decoded_input)
-    directionEnum = int(deserialized_object['direction'])
-
-# EXEMPLE --
-#    {
-#  "direction" : 2
-#}
-
-    return process_input(id_client, directionEnum)
-
-
+# Author : Adrien M.
 def process_input(id_client, directionEnum):
-
-#Auteur : Adrien M.
-    
-    print("Processing the input received from client")    
-    position = dicoResultObjet[id_client].getPosition()    
+    print("Processing the input received from client")
+    position = dicoResultObjet[id_client].getPosition()
 
     #suivi du reste du serpent
     if directionEnum != 0:
@@ -160,4 +116,4 @@ def process_input(id_client, directionEnum):
 
 
 if __name__ == "__main__":
-    main()
+    start_server()
