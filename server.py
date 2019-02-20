@@ -14,6 +14,8 @@ from threading import Thread
 from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
+# Snakes dictionnary
+snakes
 
 server_running = True
 dicoSocketClients = {}
