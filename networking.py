@@ -18,4 +18,5 @@ class Networking:
         #Fin de connexion au serveur
 
     def send(self, data):
+        print("Sent date" + str(data))
         self.s.send(data)

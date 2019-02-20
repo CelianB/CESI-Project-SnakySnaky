@@ -7,6 +7,7 @@ from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util.snake_direction import SnakeDirection
+from networking import Networking
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -20,6 +21,7 @@ class Game:
 		global testFont
 		self.window = window
 		self.world = World()
+		self.networking = Networking()
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
@@ -39,18 +41,22 @@ class Game:
 	def snakeGoUp(self, snake_position, snake_movement):
 		snake_position.y -= snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.UP)
+		self.networking.send(SnakeDirection.UP)
 
 	def snakeGoDown(self, snake_position, snake_movement):
 		snake_position.y += snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.DOWN)
+		self.networking.send(SnakeDirection.DOWN)
 
 	def snakeGoLeft(self, snake_position, snake_movement):
 		snake_position.x -= snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.LEFT)
+		self.networking.send(SnakeDirection.LEFT)
 
 	def snakeGoRight(self, snake_position, snake_movement):
 		snake_position.x += snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.RIGHT)
+		self.networking.send(SnakeDirection.RIGHT)
 
 	def on_input(self, event):
 		if event.type == QUIT:
