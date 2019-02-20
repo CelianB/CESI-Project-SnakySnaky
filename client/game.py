@@ -180,6 +180,6 @@ class Game:
 			self.world.get(onEachItemRenderer, components=[TransformComponent, SpriteRendererComponent, ItemComponent])
 
 		elif self.game_state == GameStates.DEAD:
-			text = "You're dead!"
+			text = "You are dead!"
 			rect = self.graphics.drawCenteredText(testFont, text, (0, 0, 0), frame.get_height() / 2 - testFont.get_height() / 2, False)
 			self.graphics.drawText3D(testFont, text, (140, 140, 140), (255, 255, 255), rect.topleft)
