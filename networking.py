@@ -1,4 +1,5 @@
 
+# Auteurs : Celian B. & Nathan W.
 from util.config_mgmt import ConfigHandler
 import socket
 
