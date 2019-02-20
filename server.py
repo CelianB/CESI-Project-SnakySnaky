@@ -1,4 +1,4 @@
-# Nathan
+#Auteur : Nathan W.   
 import socket
 import sys
 import traceback
@@ -50,9 +50,9 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
 
     while is_active:
-        myResultObjet = receive_input(connection, max_buffer_size)
+        client_input = receive_input(connection, max_buffer_size)
 
-        if "--QUIT--" in client_input:
+        if client_input == "QUIT":
             print("Client is requesting to quit")
             connection.close()
             print("Connection " + ip + ":" + port + " closed")
@@ -69,10 +69,16 @@ def receive_input(connection, max_buffer_size):
     if client_input_size > max_buffer_size:
         print("The input size is greater than expected {}".format(client_input_size))
 
-    decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
-    myResultObjet = decode_transmission(decoded_input)
+    try:
+        decoded_input = client_input.decode()  # decode and strip end of line
+        print(decoded_input)
+    except:
+        print("Bind failed. Error : " + str(sys.exc_info()))
+        sys.exit()
+    
+    # myResultObjet = decode_transmission(decoded_input)
 
-    return myResultObjet
+    return client_input
 
 
 def decode_transmission(decoded_input):
