@@ -74,6 +74,7 @@ def receive_input(connection, max_buffer_size):
     try:
         decoded_input = client_input.decode()  # decode and strip end of line
         print(str(decoded_input))
+        print(str(connection))
     except:
         print("Bind failed. Error : " + str(sys.exc_info()))
         sys.exit()
