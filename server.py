@@ -7,7 +7,8 @@ import traceback
 import json
 from resultObject import ResultObject
 from resultTreatment import ResultTreatment
-from map_1 import map
+from assets.map import map_1
+
 # Import snake directions
 from util.snake_direction import SnakeDirection
 
@@ -82,9 +83,8 @@ def start_server():
 def treatMessage(connection, msg):
 	if msg['type'] == 'move':
 		directionEnum = int(msg['direction'])
-
-		myResultObject = process_input(dicoSocketClients[connection], directionEnum) 
-        myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
+		myResultObject = process_input(dicoSocketClients[connection], directionEnum)
+		myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
 	elif msg['type'] == 'quit':
 		print('Client is requesting to quit')
 		connection.close()
