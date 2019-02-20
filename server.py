@@ -74,10 +74,38 @@ def receive_input(connection, max_buffer_size):
     return result
 
 
-def process_input(input_str):
-    print("Processing the input received from client")
+def process_input(id_client, input_enum_int):
 
-    return str(input_str).upper()
+    print("Processing the input received from client")    
+    position = dicoResultObjet[id_client].getPosition()    
+
+    #suivi du reste du serpent
+    if input_enum_int != 0:
+        
+        imax = len(position) - 1
+        i = imax
+
+        while i != 0:
+
+            position[i] = position[i-1]
+            i-=1
+
+    #déplacement en nouvelle position de tête
+    if input_enum_int == 1:
+        position[0][1] += 1
+
+    if input_enum_int == 2:
+        position[0][1] -= 1
+
+    if input_enum_int == 3:
+        position[0][0] -= 1
+
+    if input_enum_int == 4:
+        position[0][0] += 1
+
+    #dicoResultObjet[id_client].setPosition
+    myResultObjet(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
+
 
 if __name__ == "__main__":
     main()
