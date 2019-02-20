@@ -11,6 +11,8 @@ from threading import Thread
 from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
+# Snakes dictionnary
+snakes
 
 def main():
     start_server()
@@ -51,6 +53,8 @@ def start_server():
 def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
 
+
+
     while is_active:
         client_input = receive_input(connection, max_buffer_size)
 
@@ -75,7 +79,6 @@ def receive_input(connection, max_buffer_size):
     try:
         decoded_input = client_input.decode()  # decode and strip end of line
         print(str(decoded_input))
-        print(str(connection))
 
         process_input(connection.port,decoded_input)
     except:
