@@ -1,3 +1,4 @@
+# Florian Hervieux
 from .Component import Component
 from util.snake_direction import SnakeDirection
 

@@ -1,12 +1,15 @@
+# Florian Hervieux
+# Célian Bastien
 import pygame
 import socket
 from pygame.locals import *
 from client.ecs.world import World
-from client.ecs.components import TransformComponent, TerrainComponent, SpriteRenderer, SnakeMovementComponent, SnakeBehaviourComponent
+from client.ecs.components import TransformComponent, TerrainComponent, SpriteRendererComponent, SnakeMovementComponent, SnakeBehaviourComponent, ItemComponent
 from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
-from util.snake_direction import SnakeDirection
+from util import SnakeDirection, ItemType
+from networking import Networking
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -15,42 +18,61 @@ snake_speed = 1
 cell_size = (16, 16)
 
 class Game:
-	def __init__(self, window):
+	def __init__(self, window, event_bus):
 		global myfont
 		global testFont
 		self.window = window
 		self.world = World()
+		self.networking = Networking()
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
 		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
 
+		# windows creation
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
-		self.event_bus = EventBus()
+		# bus event handler
+		self.event_bus = event_bus
 
+		# background entity creation
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))
 
+		# snake entity creation
 		self.snake = self.world.createEntity(Vector2(20, 20))
-		self.snake.assign(SpriteRenderer(self.graphics, 'mini_snake.png'))
+		self.snake.assign(SpriteRendererComponent(self.graphics, 'mini_snake.png'))
 		self.snake.assign(SnakeMovementComponent())
 		self.snake.assign(SnakeBehaviourComponent(self.graphics))
+
+		# Bunny creation
+		# bunny = self.world.createEntity(Vector2(30, 30))
+		# bunny.assign(ItemComponent(ItemType.BUNNY))
+		# bunny.assign(SpriteRendererComponent(self.graphics, 'rabbit.png'))
+
+		# Mine creation
+		# mine = self.world.createEntity(Vector2(40, 40))
+		# mine.assign(ItemComponent(ItemType.MINE))
+		# mine.assign(SpriteRendererComponent(self.graphics, 'mine.png'))
 
 	def snakeGoUp(self, snake_position, snake_movement):
 		snake_position.y -= snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.UP)
+		self.networking.send(SnakeDirection.UP)
 
 	def snakeGoDown(self, snake_position, snake_movement):
 		snake_position.y += snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.DOWN)
+		self.networking.send(SnakeDirection.DOWN)
 
 	def snakeGoLeft(self, snake_position, snake_movement):
 		snake_position.x -= snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.LEFT)
+		self.networking.send(SnakeDirection.LEFT)
 
 	def snakeGoRight(self, snake_position, snake_movement):
 		snake_position.x += snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.RIGHT)
+		self.networking.send(SnakeDirection.RIGHT)
 
 	def on_input(self, event):
 		if event.type == QUIT:
@@ -150,4 +172,9 @@ class Game:
 								img = 'straight'
 					if r is not None:
 						self.graphics.drawImage(self.graphics.rotateImage(behaviour_cmp.sprites[img], r), (pos[0] * cell_size[0], pos[1] * cell_size[1]))
-			self.world.get(onEachSpriteRenderer, components=[TransformComponent, SnakeMovementComponent, SnakeBehaviourComponent, SpriteRenderer])
+			self.world.get(onEachSpriteRenderer, components=[TransformComponent, SnakeMovementComponent, SnakeBehaviourComponent, SpriteRendererComponent])
+
+			def onEachItemRenderer(entity, transform_cmp, sprite_renderer_com, item_cmp):
+				x, y = transform_cmp.getPosition()
+				self.graphics.drawImage(sprite_renderer_com.getImage(), (x * cell_size[0], y * cell_size[1]))
+			self.world.get(onEachItemRenderer, components=[TransformComponent, SpriteRendererComponent, ItemComponent])

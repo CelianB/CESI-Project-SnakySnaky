@@ -1,10 +1,11 @@
-# Nathan
-# Adrien
+#Auteur : Nathan W.   / Adrien M.
 import socket
 import sys
 import traceback
 import json
 from resultObject import ResultObject
+# Import snake directions
+from util.snake_direction import SnakeDirection
 
 from threading import Thread
 
@@ -49,6 +50,7 @@ def start_server():
     dicoResultObjet = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
 
 
+    # Infinite while - Do not reset request
     while True:
         connection, address = soc.accept()
         ip, port = str(address[0]), str(address[1])
@@ -64,14 +66,14 @@ def start_server():
             traceback.print_exc()
     soc.close()
 
-
+# Thread loop
 def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
 
     while is_active:
-        myResultObjet = receive_input(connection, max_buffer_size)
+        client_input = receive_input(connection, max_buffer_size)
 
-        if "--QUIT--" in client_input:
+        if client_input == "QUIT":
             print("Client is requesting to quit")
             connection.close()
             print("Connection " + ip + ":" + port + " closed")
@@ -81,19 +83,31 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
             connection.sendall("-".encode("utf8"))
 
 
+# Receive input from client
 def receive_input(connection, max_buffer_size):
+
+#Adrien / Nathan
+
     client_input = connection.recv(max_buffer_size)
     client_input_size = sys.getsizeof(client_input)
 
     if client_input_size > max_buffer_size:
-        print("The input size is greater than expected {}".format(client_input_size))
+        print("The input size is greater than expected {}".format(client_input_size))    
 
-    decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
+    try:
+        decoded_input = client_input.decode()  # decode and strip end of line
+        print(str(decoded_input))
+        print(str(connection))
+
+        id_client = dicoSocketClients.get(connection)
+        myResultObjet = decode_transmission(decoded_input, id_client)
+    except:
+        print("Bind failed. Error : " + str(sys.exc_info()))
+        sys.exit()
     
-    id_client = dicoSocketClients.get(connection)
-    myResultObjet = decode_transmission(decoded_input, id_client)
+    # myResultObjet = decode_transmission(decoded_input)
 
-    return myResultObjet
+    return client_input
 
 
 def decode_transmission(decoded_input, id_client):
@@ -121,8 +135,7 @@ def process_input(id_client, directionEnum):
     #suivi du reste du serpent
     if directionEnum != 0:
         
-        imax = len(position) - 1
-        i = imax
+        i = len(position) - 1
 
         while i != 0:
 

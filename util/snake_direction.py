@@ -1,3 +1,4 @@
+# Florian Hervieux
 from enum import Enum
 
 class SnakeDirection(Enum):

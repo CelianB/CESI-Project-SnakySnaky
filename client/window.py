@@ -1,6 +1,8 @@
+# Florian Hervieux
 import sys
 import pygame
 from pygame.locals import *
+from .events import EventBus, WindowCloseEvent
 
 def null_function():
 	pass
@@ -15,7 +17,7 @@ class InputManager:
 		self.isMouseMiddleDown = False
 
 class Window:
-	def __init__(self, title, width, height, fps_target):
+	def __init__(self, title, width, height, fps_target, **kwargs):
 		pygame.init()
 		self.frame = pygame.display.set_mode((width, height))
 		pygame.display.set_caption(title)
@@ -23,6 +25,7 @@ class Window:
 		self.input_manager = InputManager(self)
 		self.fps_target = fps_target
 		self.base_title = title
+		self.event_bus = kwargs.get('event_bus', EventBus())
 
 	def getBaseTitle(self):
 		return self.base_title
@@ -63,5 +66,6 @@ class Window:
 
 	def close(self):
 		self.running = False
+		self.event_bus.emit(WindowCloseEvent())
 		pygame.quit()
 		sys.exit()

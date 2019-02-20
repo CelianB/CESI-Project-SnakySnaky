@@ -1,3 +1,5 @@
+# Auteur : Célian B & Florian H
+
 #!/usr/bin/python3
 import os
 import configparser
