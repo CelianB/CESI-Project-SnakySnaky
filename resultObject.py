@@ -1,6 +1,6 @@
 #Auteur : Adrien M.
 
-class resultObjet(object):
+class ResultObject(object):
 
     #Constructeur
     def __init__(self, name, position, alive, score):
@@ -11,28 +11,28 @@ class resultObjet(object):
         self.score = score
     
     #getters setters
-    def getName():
+    def getName(self):
         return self.name
 
-    def getPosition():
+    def getPosition(self):
         return self.position
 
-    def getAlive():
+    def getAlive(self):
         return self.alive
 
-    def getScore():
+    def getScore(self):
         return self.score
 
-    def setName(name):
+    def setName(self, name):
         self.name = name
 
-    def setPosition():
+    def setPosition(self, position):
         self.name = position
 
-    def setAlive():
+    def setAlive(self, alive):
         self.name = alive
 
-    def setScore():
+    def setScore(self, score):
         self.name = score
 
     #"""EXEMPLE"""

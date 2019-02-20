@@ -1,8 +1,10 @@
 # Nathan
+# Adrien
 import socket
 import sys
 import traceback
 import json
+from resultObject import ResultObject
 
 from threading import Thread
 
@@ -33,13 +35,30 @@ def start_server():
     print("Socket now listening")
 
     # Boucle infinie - ne se reset pas à chaques nouveaux clients
+    global dicoSocketClients
+    dicoSocketClients = {}    
+    id = 1
+
+    global dicoResultObjet  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
+    
+    #initialisation temporairement en dur des serpents
+    dicoResultObjet = [1, [ [10,10], [10,11], [10,12], [10,13], [10,14] ] ]
+    dicoResultObjet = [2, [ [20,10], [20,11], [20,12], [20,13], [20,14] ] ]
+    dicoResultObjet = [3, [ [30,10], [30,11], [30,12], [30,13], [30,14] ] ]
+    dicoResultObjet = [4, [ [40,10], [40,11], [40,12], [40,13], [40,14] ] ]
+    dicoResultObjet = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
+
+
     while True:
         connection, address = soc.accept()
         ip, port = str(address[0]), str(address[1])
         print("Connected with " + ip + ":" + port)
+        
+        dicoSocketClients = [connection, id]
+        id += 1
 
         try:
-            Thread(target=client_thread, args=(connection, ip, port)).start()
+            Thread(target=client_thread, args=(connection, ip, port)).start()            
         except:
             print("Thread did not start.")
             traceback.print_exc()
@@ -70,34 +89,29 @@ def receive_input(connection, max_buffer_size):
         print("The input size is greater than expected {}".format(client_input_size))
 
     decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
-    myResultObjet = decode_transmission(decoded_input)
+    
+    id_client = dicoSocketClients.get(connection)
+    myResultObjet = decode_transmission(decoded_input, id_client)
 
     return myResultObjet
 
 
-def decode_transmission(decoded_input):
+def decode_transmission(decoded_input, id_client):
    
 #Auteur : Adrien M.    
 
     deserialized_object = json.loads(decoded_input)
-
-
+    directionEnum = int(deserialized_object['direction'])
 
 # EXEMPLE --
 #    {
 #  "direction" : 2
-#  "pos" : [
-#    [1,2],
-#    [1,3],
-#    [1,4],
-#    [1,5],
-#    [1,6]
-#  ]
 #}
-    pass
+
+    return process_input(id_client, directionEnum)
 
 
-def process_input(id_client, input_enum_int):
+def process_input(id_client, directionEnum):
 
 #Auteur : Adrien M.
     
@@ -105,7 +119,7 @@ def process_input(id_client, input_enum_int):
     position = dicoResultObjet[id_client].getPosition()    
 
     #suivi du reste du serpent
-    if input_enum_int != 0:
+    if directionEnum != 0:
         
         imax = len(position) - 1
         i = imax
@@ -116,20 +130,20 @@ def process_input(id_client, input_enum_int):
             i-=1
 
     #déplacement en nouvelle position de tête
-    if input_enum_int == 1:
+    if directionEnum == 1:
         position[0][1] += 1
 
-    if input_enum_int == 2:
+    if directionEnum == 2:
         position[0][1] -= 1
 
-    if input_enum_int == 3:
+    if directionEnum == 3:
         position[0][0] -= 1
 
-    if input_enum_int == 4:
+    if directionEnum == 4:
         position[0][0] += 1
 
     #dicoResultObjet[id_client].setPosition
-    return myResultObjet(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
+    return ResultObject(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
 
 
 if __name__ == "__main__":
