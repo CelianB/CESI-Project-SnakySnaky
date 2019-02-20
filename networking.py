@@ -16,6 +16,6 @@ class Networking:
         self.s.connect((self.host, self.port))
         print("- Socket connected to server")
         #Fin de connexion au serveur
-    
-    def send(data):
-        s.send(data)
+
+    def send(self, data):
+        self.s.send(data)
