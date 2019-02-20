@@ -6,6 +6,7 @@ from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util.snake_direction import SnakeDirection
+from client.events import EventBus
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -25,6 +26,7 @@ class Game:
 		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
 
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
+		self.event_bus = EventBus()
 
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))
