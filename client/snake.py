@@ -62,10 +62,27 @@ class Snake:
                 r = self.getHeadRotation()
             else:
                 r = self.getRotation(self.position[i-1],self.position[i])
-                if i == len(self.position):
+                if i == len(self.position)-1:
                     img = "tail"
                 else:
-                    img = "straight"
+                    nextR = self.getRotation(self.position[i],self.position[i+1])
+                    oldVertical = True if (nextR == 0 or nextR == 180) else False
+                    vertical = True if (r == 0 or r == 180) else False
+                    
+
+                    if oldVertical != vertical:
+                        img = "corner_left_top"
+                        if (nextR == 0 and r == 90) or (r == 180 and nextR == 270):
+                            r = 90
+                        if (r == 0 and nextR == 90) or (nextR == 180 and r == 270):
+                            r = 270
+                        if (nextR == 0 and r == 270) or (r == 180 and nextR == 90):
+                            r = 180
+                        if (r == 0 and nextR == 270) or (nextR == 180 and r == 90):
+                            r = 0
+                    else:
+                        img = "straight"
+                    
             surface.blit(pygame.transform.rotate(self.sprites[img],r),(pos[0] * 16, pos[1] * 16))
 
     def addLength(self):

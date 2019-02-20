@@ -153,7 +153,7 @@ class Client:
             self.snake.update()
             self.snake.draw(self.fenetre)
             pygame.display.flip()
-            time.sleep (50.0 / 300.0)
+            time.sleep (50.0 / 500.0)
         self.on_cleanup()
 
 client = Client()
