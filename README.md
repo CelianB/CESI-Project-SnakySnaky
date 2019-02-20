@@ -1,4 +1,4 @@
-# NomDuJeu
+# SnakySnaky
 Jeu de snake multijoueurs réalisé lors du cours de python dans le cadre de notre formation en tant que Responsable en Ingenierie des logiciels au CESI de Nancy.
 
 Membres du projet :
