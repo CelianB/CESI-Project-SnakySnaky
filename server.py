@@ -1,3 +1,4 @@
+# Nathan
 import socket
 import sys
 import traceback
@@ -28,10 +29,10 @@ def start_server():
         print("Bind failed. Error : " + str(sys.exc_info()))
         sys.exit()
 
-    soc.listen(5) # queue up to 5 requests
+    soc.listen(5) # Maximum de 5 utilisateurs
     print("Socket now listening")
 
-    # infinite loop- do not reset for every requests
+    # Boucle infinie - ne se reset pas à chaques nouveaux clients
     while True:
         connection, address = soc.accept()
         ip, port = str(address[0]), str(address[1])
