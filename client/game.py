@@ -7,9 +7,6 @@ from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util.snake_direction import SnakeDirection
-from util.config_mgmt import ConfigHandler
-
-config_general = ConfigHandler('configs', False, 'config.ini', '')
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -17,17 +14,7 @@ waitingIndex = 0
 snake_speed = 1
 cell_size = (16, 16)
 
-#Recuperation des valeurs de configuration du serveur
-host = config_general.getStr("ServerIP")
-port = config_general.getInt("ServerPort")
 
-#Debut Connecxion au serveur
-print("- Ready")
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print("- Socket initialized")
-s.connect((host, port))
-print("- Socket connected to server")
-#Fin de connexion au serveur
 
 class Game:
 	def __init__(self, window):
