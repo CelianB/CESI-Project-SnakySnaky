@@ -103,14 +103,14 @@ class Client:
                 else:
                     fond = images["wall"]
                 self.fenetre.blit(fond, (x,y))
-                x+=12
-            y+=12
+                x+=16
+            y+=16
             x=0
     
     def on_init(self):
         pygame.init()
         self.running = True
-        self.fenetre = pygame.display.set_mode((60*12,60*12 + 12))
+        self.fenetre = pygame.display.set_mode((60*16, 60*16 + 16))
 
         # Va être envoyée par le serv
         self.snake = Snake()        
