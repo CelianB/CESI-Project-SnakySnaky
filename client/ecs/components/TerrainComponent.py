@@ -4,7 +4,7 @@ class TerrainComponent(Component):
 	def __init__(self, graphics, cols, rows):
 		self.graphics = graphics
 		# self.array = [[0] * cols] * rows
-		self.array = [
+		self.layer_ground = [
 			["X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"],
 			["X","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","X"],
 			["X","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","X"],
@@ -66,10 +66,18 @@ class TerrainComponent(Component):
 			["X","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","O","X"],
 			["X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"],
 		]
-		self.cellTypes = {
+
+		self.layer_items = [[0] * len(self.layer_ground[0])] * len(self.layer_ground)
+
+		self.cellTypes_ground = {
 			'X': self.graphics.loadImage('wall.png'),
 			'O': self.graphics.loadImage('grass.png'),
 		}
 
-	def getSprite(self, cell_type):
-		return self.cellTypes[cell_type]
+		self.cellTypes_items = {
+			'R': self.graphics.loadImage('rabbit.png'),
+			'M': self.graphics.loadImage('mine.png'),
+		}
+
+	def getGroundSprite(self, cell_type):
+		return self.cellTypes_ground[cell_type]
