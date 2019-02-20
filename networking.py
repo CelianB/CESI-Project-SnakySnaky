@@ -1,4 +1,4 @@
-
+# Auteur : Célian B
 from util.config_mgmt import ConfigHandler
 import socket
 
