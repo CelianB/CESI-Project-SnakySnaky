@@ -1,6 +1,7 @@
 import socket
 import sys
 import traceback
+import json
 
 from threading import Thread
 
@@ -21,7 +22,6 @@ def start_server():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     print("Socket created")
-
     try:
         soc.bind((host, port))
     except:
@@ -75,12 +75,31 @@ def receive_input(connection, max_buffer_size):
 
 
 def decode_transmission(decoded_input):
-    
+   
+#Auteur : Adrien M.    
+
+    deserialized_object = json.loads(decoded_input)
+
+
+
+# EXEMPLE --
+#    {
+#  "direction" : 2
+#  "pos" : [
+#    [1,2],
+#    [1,3],
+#    [1,4],
+#    [1,5],
+#    [1,6]
+#  ]
+#}
     pass
 
 
 def process_input(id_client, input_enum_int):
 
+#Auteur : Adrien M.
+    
     print("Processing the input received from client")    
     position = dicoResultObjet[id_client].getPosition()    
 
