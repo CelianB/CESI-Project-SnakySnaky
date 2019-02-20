@@ -3,6 +3,8 @@ import socket
 import sys
 import traceback
 import json
+# Import snake directions
+from util.snake_direction import SnakeDirection
 
 from threading import Thread
 
@@ -71,7 +73,7 @@ def receive_input(connection, max_buffer_size):
 
     try:
         decoded_input = client_input.decode()  # decode and strip end of line
-        print(decoded_input)
+        print(str(decoded_input))
     except:
         print("Bind failed. Error : " + str(sys.exc_info()))
         sys.exit()
