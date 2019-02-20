@@ -1,5 +1,7 @@
-from .components import TransformComponent
-from .entity import Entity
+from multipledispatch import dispatch
+from util.vector2 import Vector2
+from client.ecs.components import TransformComponent
+from client.ecs.entity import Entity
 
 class World:
 	def __init__(self):
@@ -10,6 +12,11 @@ class World:
 		self.component_to_entities = {} # component_class => entity[]
 		self.entities = {} # entity_id => entity
 
+	@dispatch(Vector2)
+	def createEntity(self, position):
+		return self.createEntity(position, Vector2(0, 0), Vector2(1, 1))
+
+	@dispatch(Vector2, Vector2, Vector2)
 	def createEntity(self, position, rotation, scale):
 		print('World:createEntity')
 		entity = Entity(self)
@@ -70,8 +77,9 @@ class World:
 	def _getComponentForEntity(self, entity, component):
 		components = self.entity_to_components[entity]
 		if components:
-			filtered = filter(lambda x: x.__class__ == component.__class__, components)
-			return filtered
+			filtered = list(filter(lambda x: x.__class__ == component, components))
+			if len(filtered) > 0:
+				return filtered[0]
 
 	def delete(self, entity):
 		for c in self.entity_to_components[entity]:

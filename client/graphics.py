@@ -79,6 +79,9 @@ class Graphics:
 		else:
 			return self.drawCenteredText(font, texte, color2, posY, render)
 
+	def rotateImage(self, image, degrees):
+		return pygame.transform.rotate(image, degrees)
+
 	def displayBackground(self, image):
 		self.frame.blit(image, (0, 0))
 

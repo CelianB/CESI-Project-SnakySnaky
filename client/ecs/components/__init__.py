@@ -1,3 +1,6 @@
 from .Component import Component
 from .TransformComponent import TransformComponent
 from .TerrainComponent import TerrainComponent
+from .SpriteRenderer import SpriteRenderer
+from .SnakeMovementComponent import SnakeMovementComponent
+from .SnakeBehaviourComponent import SnakeBehaviourComponent

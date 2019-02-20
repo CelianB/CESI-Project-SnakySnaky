@@ -3,7 +3,7 @@
 
 import client
 
-win = client.Window('Cobra', 960, 960, 30)
+win = client.Window('Cobra', 60*16, 60*16, 30)
 
 game = client.Game(win)
 
