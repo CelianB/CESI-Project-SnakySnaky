@@ -107,24 +107,38 @@ class Game:
 			def onEachTerrain(entity, transform_cmp, terrain_cmp):
 				w, h = cell_size
 				# Loop over rows.
-				for idx_r, row in enumerate(terrain_cmp.array):
+				for idx_r, row in enumerate(terrain_cmp.layer_ground):
 					# Loop over columns.
 					for idx_c, column in enumerate(row):
-						self.graphics.drawImage(terrain_cmp.getSprite(column), (transform_cmp.getPosition().x + idx_c * w, transform_cmp.getPosition().y + idx_r * h))
+						self.graphics.drawImage(terrain_cmp.getGroundSprite(column), (transform_cmp.getPosition().x + idx_c * w, transform_cmp.getPosition().y + idx_r * h))
 			self.world.get(onEachTerrain, components=[TransformComponent, TerrainComponent])
 
 			def onEachSpriteRenderer(entity, transform_cmp, movement_cmp, behaviour_cmp, sprite_renderer_com):
-				# self.graphics.drawImage(sprite_renderer_cmp.getImage(), (transform_cmp.getPosition().x, transform_cmp.getPosition().y))
 				for i, pos in enumerate(behaviour_cmp.position):
 					if i == 0:
 						img = 'head' if (len(behaviour_cmp.position) != 1) else 'mini_snake'
 						r = movement_cmp.getHeadRotation()
 					else:
-						r = movement_cmp.getRotation(behaviour_cmp.position[i-1], behaviour_cmp.position[i])
-						if i == len(behaviour_cmp.position):
+						r = movement_cmp.getRotation(behaviour_cmp.position[i - 1], behaviour_cmp.position[i])
+						if i == len(behaviour_cmp.position) - 1:
 							img = 'tail'
 						else:
-							img = 'straight'
+							nextR = movement_cmp.getRotation(behaviour_cmp.position[i], behaviour_cmp.position[i + 1])
+							oldVertical = True if (nextR == 0 or nextR == 180) else False
+							vertical = True if (r == 0 or r == 180) else False
+
+							if oldVertical != vertical:
+								img = 'corner_left_top'
+								if (nextR == 0 and r == 90) or (r == 180 and nextR == 270):
+									r = 90
+								if (r == 0 and nextR == 90) or (nextR == 180 and r == 270):
+									r = 270
+								if (nextR == 0 and r == 270) or (r == 180 and nextR == 90):
+									r = 180
+								if (r == 0 and nextR == 270) or (nextR == 180 and r == 90):
+									r = 0
+							else:
+								img = 'straight'
 					if r is not None:
 						self.graphics.drawImage(self.graphics.rotateImage(behaviour_cmp.sprites[img], r), (pos[0] * cell_size[0], pos[1] * cell_size[1]))
 			self.world.get(onEachSpriteRenderer, components=[TransformComponent, SnakeMovementComponent, SnakeBehaviourComponent, SpriteRenderer])
