@@ -32,7 +32,7 @@ class ResultTreatment():
         if self.myResultObjet.alive == True :
             try:
                 for case in self.arene:
-                    if case[self.myResultObjet.pos[0][0]][self.myResultObjet.pos[0][1]] == 1:
+                    if case[self.myResultObjet.pos[0][0]][self.myResultObjet.pos[0][1]] == 'X':
                         self.myResultObjet.alive = False
             except:
                 print("Erreur : calcul de collisions avec les murs")

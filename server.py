@@ -6,6 +6,8 @@ import sys
 import traceback
 import json
 from resultObject import ResultObject
+from resultTreatment import ResultTreatment
+from map_1 import map
 # Import snake directions
 from util.snake_direction import SnakeDirection
 
@@ -38,15 +40,15 @@ def start_server():
 	print('Socket now listening...')
 
 	# Boucle infinie - ne se reset pas à chaques nouveaux clients
-	global dicoResultObjet  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
+	global dicoResultObject  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
 	
 	# Snakes dictionnary
 	#initialisation temporairement en dur des serpents
-	dicoResultObjet = [1, [ [10,10], [10,11], [10,12], [10,13], [10,14] ] ]
-	dicoResultObjet = [2, [ [20,10], [20,11], [20,12], [20,13], [20,14] ] ]
-	dicoResultObjet = [3, [ [30,10], [30,11], [30,12], [30,13], [30,14] ] ]
-	dicoResultObjet = [4, [ [40,10], [40,11], [40,12], [40,13], [40,14] ] ]
-	dicoResultObjet = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
+	dicoResultObject = [1, [ [10,10], [10,11], [10,12], [10,13], [10,14] ] ]
+	dicoResultObject = [2, [ [20,10], [20,11], [20,12], [20,13], [20,14] ] ]
+	dicoResultObject = [3, [ [30,10], [30,11], [30,12], [30,13], [30,14] ] ]
+	dicoResultObject = [4, [ [40,10], [40,11], [40,12], [40,13], [40,14] ] ]
+	dicoResultObject = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
 
 
 	# Infinite while - Do not reset request
@@ -80,15 +82,17 @@ def start_server():
 def treatMessage(connection, msg):
 	if msg['type'] == 'move':
 		directionEnum = int(msg['direction'])
-		process_input(dicoSocketClients[connection], directionEnum)
+
+		myResultObject = process_input(dicoSocketClients[connection], directionEnum) 
+        myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
 	elif msg['type'] == 'quit':
 		print('Client is requesting to quit')
 		connection.close()
 
-# Author : Adrien M.
+# Author : Adrien M
 def process_input(id_client, directionEnum):
 	print("Processing the input received from client")
-	position = dicoResultObjet[id_client].getPosition()
+	position = dicoResultObject[id_client].getPosition()
 
 	#suivi du reste du serpent
 	if directionEnum != 0:
@@ -114,7 +118,7 @@ def process_input(id_client, directionEnum):
 		position[0][0] += 1
 
 	#dicoResultObjet[id_client].setPosition
-	return ResultObject(dicoResultObjet[id_client].name, position, True, dicoResultObjet[id_client].score)
+	return ResultObject(dicoResultObject[id_client].name, position, True, dicoResultObject[id_client].score)
 
 
 if __name__ == "__main__":
