@@ -3,6 +3,7 @@ from multipledispatch import dispatch
 from util.vector2 import Vector2
 from client.ecs.components import TransformComponent
 from client.ecs.entity import Entity
+from client.ecs.systems import SystemTypes
 
 class World:
 	def __init__(self):
@@ -12,6 +13,8 @@ class World:
 		# ? component_class => entity_id[]
 		self.component_to_entities = {} # component_class => entity[]
 		self.entities = {} # entity_id => entity
+		self.system_priorities = {} # system_class => priority
+		self.systems_types = {} # loaded systems with their types
 
 	@dispatch(Vector2)
 	def createEntity(self, position):
@@ -25,9 +28,26 @@ class World:
 		self._associate(entity, TransformComponent(position, rotation, scale))
 		return entity
 
-	def update(self):
-		# foreach systems
+	def createSystem(self, system_type: SystemTypes, system, priority=None):
+		system_clazz = system.__class__
+		if system_clazz in self.system_priorities:
+			return
+		self.system_priorities[system_clazz] = priority
+		if priority is not None:
+			if not system_type in self.systems_types:
+				self.systems_types[system_type] = []
+			self.systems_types[system_type].append(system)
+			# Sort systems
+			sp = self.system_priorities
+			sorted(self.systems_types[system_type], key=lambda x: sp[x.__class__], reverse=True)
+		else:
+			self.systems_types[system_type].append(system)
+
+	def update(self, system_type: SystemTypes):
 		print('World:update')
+		if system_type in self.systems_types:
+			for s in self.systems_types[system_type]:
+				s.run()
 
 	def get(self, func, **kwargs):
 		components = kwargs.get('components', None)

@@ -5,11 +5,12 @@ import socket
 from pygame.locals import *
 from client.ecs.world import World
 from client.ecs.components import TransformComponent, TerrainComponent, SpriteRendererComponent, SnakeMovementComponent, SnakeBehaviourComponent, ItemComponent
+from client.ecs.systems import SystemTypes, TerrainSystem
 from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util import SnakeDirection, ItemType
-from networking import Networking
+from client.networking import Networking
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -23,7 +24,7 @@ class Game:
 		global testFont
 		self.window = window
 		self.world = World()
-		self.networking = Networking()
+		self.networking = Networking(event_bus)
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
@@ -44,15 +45,17 @@ class Game:
 		self.snake.assign(SnakeMovementComponent())
 		self.snake.assign(SnakeBehaviourComponent(self.graphics))
 
+		terrain_system = self.world.createSystem(SystemTypes.RENDER, TerrainSystem(self.world, self.graphics, cell_size), 1)
+
 		# Bunny creation
-		# bunny = self.world.createEntity(Vector2(30, 30))
-		# bunny.assign(ItemComponent(ItemType.BUNNY))
-		# bunny.assign(SpriteRendererComponent(self.graphics, 'rabbit.png'))
+		bunny = self.world.createEntity(Vector2(30, 30))
+		bunny.assign(ItemComponent(ItemType.BUNNY))
+		bunny.assign(SpriteRendererComponent(self.graphics, 'rabbit.png'))
 
 		# Mine creation
-		# mine = self.world.createEntity(Vector2(40, 40))
-		# mine.assign(ItemComponent(ItemType.MINE))
-		# mine.assign(SpriteRendererComponent(self.graphics, 'mine.png'))
+		mine = self.world.createEntity(Vector2(40, 40))
+		mine.assign(ItemComponent(ItemType.MINE))
+		mine.assign(SpriteRendererComponent(self.graphics, 'mine.png'))
 
 	def snakeGoUp(self, snake_position, snake_movement):
 		snake_position.y -= snake_speed * cell_size[1]
@@ -114,6 +117,7 @@ class Game:
 					waitingIndex += 1
 
 		elif self.game_state == GameStates.IN_GAME:
+			self.world.update(SystemTypes.UPDATE)
 			def onEachSnakeMovement(entity, transform_cmp, snake_movement_cmp, behaviour_cmp):
 				dirs = {
 					SnakeDirection.UP: self.snakeGoUp,
@@ -135,14 +139,7 @@ class Game:
 			frame.blit(label, (100, 100))
 
 		elif self.game_state == GameStates.IN_GAME:
-			def onEachTerrain(entity, transform_cmp, terrain_cmp):
-				w, h = cell_size
-				# Loop over rows.
-				for idx_r, row in enumerate(terrain_cmp.layer_ground):
-					# Loop over columns.
-					for idx_c, column in enumerate(row):
-						self.graphics.drawImage(terrain_cmp.getGroundSprite(column), (transform_cmp.getPosition().x + idx_c * w, transform_cmp.getPosition().y + idx_r * h))
-			self.world.get(onEachTerrain, components=[TransformComponent, TerrainComponent])
+			self.world.update(SystemTypes.RENDER)
 
 			def onEachSpriteRenderer(entity, transform_cmp, movement_cmp, behaviour_cmp, sprite_renderer_com):
 				for i, pos in enumerate(behaviour_cmp.position):

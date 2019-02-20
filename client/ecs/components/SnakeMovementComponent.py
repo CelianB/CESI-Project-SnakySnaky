@@ -3,7 +3,7 @@ from .Component import Component
 from util.snake_direction import SnakeDirection
 
 class SnakeMovementComponent(Component):
-	def __init__(self, direction: SnakeDirection=SnakeDirection.NONE):
+	def __init__(self, direction: SnakeDirection=SnakeDirection.LEFT):
 		self.direction = direction
 
 	def setDirection(self, direction):

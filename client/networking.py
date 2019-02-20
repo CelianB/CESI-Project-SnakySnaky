@@ -8,7 +8,8 @@ class Networking:
     host = config_general.getStr("ServerIP")
     port = config_general.getInt("ServerPort")
 
-    def __init__(self):
+    def __init__(self, event_bus):
+        self.event_bus = event_bus
         try:
             #Debut Connecxion au serveur
             print("- Ready")
