@@ -1,3 +1,5 @@
+#Auteur : Adrien M.
+
 class resultObjet(object):
 
     #Constructeur
@@ -7,7 +9,8 @@ class resultObjet(object):
         self.position = position
         self.alive = alive
         self.score = score
-
+    
+    #getters setters
     def getName():
         return self.name
 

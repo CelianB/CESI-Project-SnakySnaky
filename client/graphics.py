@@ -73,12 +73,6 @@ class Graphics:
 		else:
 			return self.drawText(font, texte, color2, topLeft, render)
 
-	def drawCenteredTextChangeColor(self, font, texte, color1, color2, posY, render=True):
-		if not self.isCollide(self.drawCenteredText(font, texte, color1, posY, False)):
-			return self.drawCenteredText(font, texte, color1, posY, render)
-		else:
-			return self.drawCenteredText(font, texte, color2, posY, render)
-
 	def rotateImage(self, image, degrees):
 		return pygame.transform.rotate(image, degrees)
 
