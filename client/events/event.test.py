@@ -1,27 +1,27 @@
 from event_bus import EventBus
-from key_event import KeyEvent
+from sample_event import SampleEvent
 
 KEY_ESCAPE = 27
 
 event_bus = EventBus()
 assert event_bus is not None
 
-def onEventKey(event: KeyEvent):
+def onEventKey(event: SampleEvent):
 	assert event is not None
 	assert event.key == KEY_ESCAPE
 
-assert len(event_bus.getHandlers(KeyEvent)) == 0
+assert len(event_bus.getHandlers(SampleEvent)) == 0
 
 event_bus.unregister(onEventKey)
-assert len(event_bus.getHandlers(KeyEvent)) == 0
+assert len(event_bus.getHandlers(SampleEvent)) == 0
 
 event_bus.register(onEventKey)
-assert len(event_bus.getHandlers(KeyEvent)) == 1
+assert len(event_bus.getHandlers(SampleEvent)) == 1
 
 event_bus.unregister(onEventKey)
-assert len(event_bus.getHandlers(KeyEvent)) == 0
+assert len(event_bus.getHandlers(SampleEvent)) == 0
 
 event_bus.register(onEventKey)
-assert len(event_bus.getHandlers(KeyEvent)) == 1
+assert len(event_bus.getHandlers(SampleEvent)) == 1
 
-event_bus.emit(KeyEvent(KEY_ESCAPE))
+event_bus.emit(SampleEvent(KEY_ESCAPE))
