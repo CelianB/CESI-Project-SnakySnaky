@@ -1,3 +1,4 @@
+# Florian Hervieux
 from .Component import Component
 
 class TransformComponent(Component):

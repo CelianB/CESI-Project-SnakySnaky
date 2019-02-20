@@ -1,3 +1,4 @@
+# Florian Hervieux
 from math import *
 
 def format_number(n, accuracy=6):

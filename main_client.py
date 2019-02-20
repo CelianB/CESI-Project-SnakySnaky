@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Florian Hervieux
 
 from client import Window, Game
 from client.events import EventBus

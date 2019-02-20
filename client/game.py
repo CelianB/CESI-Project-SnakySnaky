@@ -1,3 +1,5 @@
+# Florian Hervieux
+# Célian Bastien
 import pygame
 import socket
 from pygame.locals import *

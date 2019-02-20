@@ -1,3 +1,4 @@
+# Florian Hervieux
 from .Component import Component
 from util.item_type import ItemType
 
