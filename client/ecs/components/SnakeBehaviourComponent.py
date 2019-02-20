@@ -32,8 +32,9 @@ class SnakeBehaviourComponent(Component):
 		self.position.insert(0, newpos)
 
 	def removeLast(self):
-		# We remove the last item
-		self.position.pop()
+		# We remove the last item if there is more than one
+		if len(self.position) > 1:
+			self.position.pop()
 
 	def update(self, direction):
 		self.addLength(direction)

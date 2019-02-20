@@ -67,6 +67,13 @@ class Game:
 					self.snakeGoLeft(snake_position, snake_movement)
 				elif event.key == K_RIGHT:
 					self.snakeGoRight(snake_position, snake_movement)
+			elif event.key in [K_KP_PLUS, K_KP_MINUS]:
+				snake_behaviour = self.snake.get(SnakeBehaviourComponent)
+				if event.key == K_KP_PLUS:
+					snake_movement = self.snake.get(SnakeMovementComponent)
+					snake_behaviour.addLength(snake_movement.getDirection())
+				elif event.key == K_KP_MINUS:
+					snake_behaviour.removeLast()
 
 	def on_update(self, deltaTime):
 		self.updates += deltaTime
