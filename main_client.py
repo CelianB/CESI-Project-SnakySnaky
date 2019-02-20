@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import client
+from util.config_mgmt import ConfigHandler
 
-win = client.Window('Cobra', 60*16, 60*16, 10)
+config_general = ConfigHandler('configs', False, 'config.ini', '')
+
+win = client.Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10)
 
 game = client.Game(win)
 
