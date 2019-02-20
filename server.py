@@ -47,7 +47,7 @@ def start_server():
             traceback.print_exc()
     soc.close()
 
-
+# Thread loop
 def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
 
@@ -64,6 +64,7 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
             connection.sendall("-".encode("utf8"))
 
 
+# Receive input from client
 def receive_input(connection, max_buffer_size):
     client_input = connection.recv(max_buffer_size)
     client_input_size = sys.getsizeof(client_input)
