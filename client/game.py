@@ -14,8 +14,6 @@ waitingIndex = 0
 snake_speed = 1
 cell_size = (16, 16)
 
-
-
 class Game:
 	def __init__(self, window):
 		global myfont
@@ -28,6 +26,7 @@ class Game:
 		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
 
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
+		self.event_bus = EventBus()
 
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))

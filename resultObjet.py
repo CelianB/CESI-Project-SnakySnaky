@@ -1,3 +1,5 @@
+#Auteur : Adrien M.
+
 class resultObjet(object):
 
     #Constructeur

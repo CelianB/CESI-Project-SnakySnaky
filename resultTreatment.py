@@ -1,3 +1,5 @@
+#Auteur : Adrien M.
+
 class resultTreatment():
     
     """Classe de traitement des demandes client et calcul du résultat"""
