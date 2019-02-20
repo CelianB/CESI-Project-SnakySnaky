@@ -20,7 +20,8 @@ class EventBus:
 			return []
 
 	def emit(self, event):
-		handlers = self.mapping[event.__class__]
-		if handlers:
-			for h in handlers:
-				h(event)
+		if event.__class__ in self.mapping:
+			handlers = self.mapping[event.__class__]
+			if handlers:
+				for h in handlers:
+					h(event)

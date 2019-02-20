@@ -1,2 +1,3 @@
 from .event_bus import EventBus
-from .key_event import KeyEvent
+from .sample_event import SampleEvent
+from .window_close_event import WindowCloseEvent
