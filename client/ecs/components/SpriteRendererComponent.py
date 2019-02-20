@@ -3,7 +3,7 @@ from multipledispatch import dispatch
 from client.graphics import Graphics
 from .Component import Component
 
-class SpriteRenderer(Component):
+class SpriteRendererComponent(Component):
 	@dispatch(Graphics, str)
 	def __init__(self, graphics, image):
 		self.image = graphics.loadImage(image)
