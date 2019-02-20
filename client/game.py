@@ -28,7 +28,7 @@ class Game:
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
-		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
+		testFont = pygame.font.Font('assets/fonts/test.ttf', 38)
 
 		# windows creation
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
@@ -46,6 +46,7 @@ class Game:
 		self.snake.assign(SnakeBehaviourComponent(self.graphics))
 
 		terrain_system = self.world.createSystem(SystemTypes.RENDER, TerrainSystem(self.world, self.graphics, cell_size), 1)
+		# snake_movement_system = self.world.createSystem(SystemTypes.UPDATE, SnakeMovementSystem())
 
 		# Bunny creation
 		bunny = self.world.createEntity(Vector2(30, 30))
@@ -94,13 +95,15 @@ class Game:
 					self.snakeGoLeft(snake_position, snake_movement)
 				elif event.key == K_RIGHT:
 					self.snakeGoRight(snake_position, snake_movement)
-			elif event.key in [K_KP_PLUS, K_KP_MINUS]:
+			elif event.key in [K_KP_PLUS, K_KP_MINUS, K_KP_ENTER]:
 				snake_behaviour = self.snake.get(SnakeBehaviourComponent)
 				if event.key == K_KP_PLUS:
 					snake_movement = self.snake.get(SnakeMovementComponent)
 					snake_behaviour.addLength(snake_movement.getDirection())
 				elif event.key == K_KP_MINUS:
 					snake_behaviour.removeLast()
+				elif event.key == K_KP_ENTER:
+					self.game_state = GameStates.DEAD
 
 	def on_update(self, deltaTime):
 		self.updates += deltaTime
@@ -175,3 +178,8 @@ class Game:
 				x, y = transform_cmp.getPosition()
 				self.graphics.drawImage(sprite_renderer_com.getImage(), (x * cell_size[0], y * cell_size[1]))
 			self.world.get(onEachItemRenderer, components=[TransformComponent, SpriteRendererComponent, ItemComponent])
+
+		elif self.game_state == GameStates.DEAD:
+			text = "You're dead!"
+			rect = self.graphics.drawCenteredText(testFont, text, (0, 0, 0), frame.get_height() / 2 - testFont.get_height() / 2, False)
+			self.graphics.drawText3D(testFont, text, (140, 140, 140), (255, 255, 255), rect.topleft)
