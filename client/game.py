@@ -7,7 +7,6 @@ from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util.snake_direction import SnakeDirection
-from client.events import EventBus
 from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
@@ -31,7 +30,7 @@ print("- Socket connected to server")
 #Fin de connexion au serveur
 
 class Game:
-	def __init__(self, window):
+	def __init__(self, window, event_bus):
 		global myfont
 		global testFont
 		self.window = window
@@ -42,7 +41,7 @@ class Game:
 		testFont = pygame.font.Font('assets/fonts/test.ttf', 24)
 
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
-		self.event_bus = EventBus()
+		self.event_bus = event_bus
 
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))
