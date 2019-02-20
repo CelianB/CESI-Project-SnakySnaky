@@ -11,7 +11,7 @@ class resultTreatment():
         self.dicoResultObjet = dicoResultObjet
         self.myResultObjet = myResultObjet
 
-
+    #Traitement du mouvement du joueur
     def calculMoveResult():
 
         #vérification que le mouvement est autorisé (un serpent ne se mord pas la queue !)
@@ -37,6 +37,7 @@ class resultTreatment():
             except:
                 print("Erreur : calcul de collisions avec les murs")
 
+    #Memorisation du nouveau positionnement
     def memoriseMove(indexResultObjet):
 
         if myResultObjet.alive == True:

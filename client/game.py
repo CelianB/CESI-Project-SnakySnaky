@@ -7,9 +7,7 @@ from client.game_states import GameStates
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util.snake_direction import SnakeDirection
-from util.config_mgmt import ConfigHandler
-
-config_general = ConfigHandler('configs', False, 'config.ini', '')
+from networking import Networking
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -17,24 +15,13 @@ waitingIndex = 0
 snake_speed = 1
 cell_size = (16, 16)
 
-#Recuperation des valeurs de configuration du serveur
-host = config_general.getStr("ServerIP")
-port = config_general.getInt("ServerPort")
-
-#Debut Connecxion au serveur
-print("- Ready")
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print("- Socket initialized")
-s.connect((host, port))
-print("- Socket connected to server")
-#Fin de connexion au serveur
-
 class Game:
 	def __init__(self, window, event_bus):
 		global myfont
 		global testFont
 		self.window = window
 		self.world = World()
+		self.networking = Networking()
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
@@ -54,18 +41,22 @@ class Game:
 	def snakeGoUp(self, snake_position, snake_movement):
 		snake_position.y -= snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.UP)
+		self.networking.send(SnakeDirection.UP)
 
 	def snakeGoDown(self, snake_position, snake_movement):
 		snake_position.y += snake_speed * cell_size[1]
 		snake_movement.setDirection(SnakeDirection.DOWN)
+		self.networking.send(SnakeDirection.DOWN)
 
 	def snakeGoLeft(self, snake_position, snake_movement):
 		snake_position.x -= snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.LEFT)
+		self.networking.send(SnakeDirection.LEFT)
 
 	def snakeGoRight(self, snake_position, snake_movement):
 		snake_position.x += snake_speed * cell_size[0]
 		snake_movement.setDirection(SnakeDirection.RIGHT)
+		self.networking.send(SnakeDirection.RIGHT)
 
 	def on_input(self, event):
 		if event.type == QUIT:

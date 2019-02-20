@@ -7,7 +7,12 @@ from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
 
+<<<<<<< HEAD
 event_bus = EventBus()
+=======
+#Initialisation de la fenetre
+win = client.Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10)
+>>>>>>> 19bc416ea150e64509e5ee6348747ad245fa14df
 
 win = Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10, event_bus=event_bus)
 
