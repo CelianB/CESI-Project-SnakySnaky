@@ -55,6 +55,7 @@ class Snake:
         elif (beforeCase[1]<currentCase[1]):
             return 0
 
+    # On dessine le serpent
     def draw(self,surface):
         for i,pos in enumerate(self.position):
             if i == 0:
