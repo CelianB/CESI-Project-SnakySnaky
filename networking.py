@@ -19,4 +19,4 @@ class Networking:
 
     def send(self, data):
         print("Sent date" + str(data))
-        self.s.send(data)
+        self.s.send(encode(data)
