@@ -28,7 +28,7 @@ class Game:
 		self.game_state = GameStates.IN_GAME
 		self.updates = 0
 		self.updates_wainting = 0
-		testFont = pygame.font.Font('assets/fonts/test.ttf', 38)
+		testFont = pygame.font.Font('assets/fonts/Roboto-Medium.ttf', 38)
 
 		# windows creation
 		self.graphics = Graphics(window.getBaseTitle(), window.getFrame())
