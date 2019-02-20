@@ -6,6 +6,7 @@ from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
 
+#Initialisation de la fenetre
 win = client.Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10)
 
 game = client.Game(win)

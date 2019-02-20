@@ -79,20 +79,25 @@ class Graphics:
 	def displayBackground(self, image):
 		self.frame.blit(image, (0, 0))
 
+	# Draw Image on Window
 	def drawImage(self, img, pos):
 		rect = img.get_rect()
 		rect.topleft = pos
 		self.frame.blit(img, rect)
 		return rect
 
+	# Load window image
 	def loadImage(self, image):
 		return pygame.image.load(self.dir_imgs + image)
 
+	# Load text font
 	def loadFont(self, filename, height):
 		return pygame.font.Font(filename, height)
 
+	# Load window background
 	def loadBackground(self, img):
 		return pygame.transform.scale(self.loadImage(img), (self.frame.get_size()[0], self.frame.get_size()[1]))
 
+	# Set Window Title
 	def setWindowTitle(self):
 		pygame.display.set_caption(self.windowTitle + ' - ' + str(s))
