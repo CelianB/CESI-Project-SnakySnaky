@@ -135,13 +135,13 @@ class Client:
             keys = pygame.key.get_pressed() 
             if (keys[K_RIGHT]):
                 self.snake.moveRight()
- 
+
             if (keys[K_LEFT]):
                 self.snake.moveLeft()
- 
+
             if (keys[K_UP]):
                 self.snake.moveUp()
- 
+
             if (keys[K_DOWN]):
                 self.snake.moveDown()
 
