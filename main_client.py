@@ -5,17 +5,17 @@ from client import Window, Game
 from client.events import EventBus
 from util.config_mgmt import ConfigHandler
 
+# Load config file
 config_general = ConfigHandler('configs', False, 'config.ini', '')
 
-<<<<<<< HEAD
+# Inin event bus
 event_bus = EventBus()
-=======
-#Initialisation de la fenetre
-win = client.Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10)
->>>>>>> 19bc416ea150e64509e5ee6348747ad245fa14df
 
+# Init window
 win = Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10, event_bus=event_bus)
 
+# Create game
 game = Game(win, event_bus)
 
+# Run game
 win.run(input=game.on_input, update=game.on_update, render=game.on_render)
