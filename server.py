@@ -32,7 +32,7 @@ def start_server():
     soc.listen(5) # Maximum de 5 utilisateurs
     print("Socket now listening")
 
-    # Boucle infinie - ne se reset pas à chaques nouveaux clients
+    # Infinite while - Do not reset request
     while True:
         connection, address = soc.accept()
         ip, port = str(address[0]), str(address[1])
@@ -76,7 +76,6 @@ def receive_input(connection, max_buffer_size):
 
 
 def decode_transmission(decoded_input):
-   
 #Auteur : Adrien M.    
 
     deserialized_object = json.loads(decoded_input)
@@ -104,7 +103,7 @@ def process_input(id_client, input_enum_int):
     print("Processing the input received from client")    
     position = dicoResultObjet[id_client].getPosition()    
 
-    #suivi du reste du serpent
+    #Followed by the rest of the snake
     if input_enum_int != 0:
         
         imax = len(position) - 1
