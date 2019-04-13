@@ -7,10 +7,10 @@ from client.ecs.world import World
 from client.ecs.components import TransformComponent, TerrainComponent, SpriteRendererComponent, SnakeMovementComponent, SnakeBehaviourComponent, ItemComponent
 from client.ecs.systems import SystemTypes, TerrainSystem
 from client.game_states import GameStates
+from util.config_mgmt import ConfigHandler
 from util.vector2 import Vector2
 from client.graphics import Graphics
 from util import SnakeDirection, ItemType
-from client.networking import Networking
 
 waitingTab = ['', '.', '..', '...']
 waitingIndex = 0
@@ -24,8 +24,10 @@ class Game:
 		global testFont
 		self.window = window
 		self.world = World()
-		self.networking = Networking(event_bus)
-		self.game_state = GameStates.IN_GAME
+		self.game_state = GameStates.WAITING_ROOM
+
+		self.config_general = ConfigHandler('configs', False, 'config.ini', '')
+
 		self.updates = 0
 		self.updates_wainting = 0
 		testFont = pygame.font.Font('assets/fonts/Roboto-Medium.ttf', 38)
@@ -39,12 +41,6 @@ class Game:
 		terrain = self.world.createEntity(Vector2(0, 0), Vector2(), Vector2(1, 1))
 		terrain.assign(TerrainComponent(self.graphics, 60, 60))
 
-		# snake entity creation
-		self.snake = self.world.createEntity(Vector2(20, 20))
-		self.snake.assign(SpriteRendererComponent(self.graphics, 'mini_snake.png'))
-		self.snake.assign(SnakeMovementComponent())
-		self.snake.assign(SnakeBehaviourComponent(self.graphics))
-
 		terrain_system = self.world.createSystem(SystemTypes.RENDER, TerrainSystem(self.world, self.graphics, cell_size), 1)
 		# snake_movement_system = self.world.createSystem(SystemTypes.UPDATE, SnakeMovementSystem())
 
@@ -57,6 +53,15 @@ class Game:
 		mine = self.world.createEntity(Vector2(40, 40))
 		mine.assign(ItemComponent(ItemType.MINE))
 		mine.assign(SpriteRendererComponent(self.graphics, 'mine.png'))
+	
+	def initGame(self,position,direction):
+		# snake entity creation
+		self.game_state = GameStates.IN_GAME
+		
+		self.snake = self.world.createEntity(Vector2(20, 20))
+		self.snake.assign(SpriteRendererComponent(self.graphics, 'mini_snake.png'))
+		self.snake.assign(SnakeMovementComponent())
+		self.snake.assign(SnakeBehaviourComponent(self.graphics))
 
 	def snakeGoUp(self, snake_position, snake_movement):
 		snake_position.y -= snake_speed * cell_size[1]
@@ -99,7 +104,7 @@ class Game:
 				snake_behaviour = self.snake.get(SnakeBehaviourComponent)
 				if event.key == K_KP_PLUS:
 					snake_movement = self.snake.get(SnakeMovementComponent)
-					snake_behaviour.addLength(snake_movement.getDirection())
+					snake_behaviour.growUp(snake_movement.getDirection())
 				elif event.key == K_KP_MINUS:
 					snake_behaviour.removeLast()
 				elif event.key == K_KP_ENTER:
@@ -112,7 +117,9 @@ class Game:
 			global waitingIndex
 			global waitingTab
 			self.updates_wainting += deltaTime
-			if self.updates_wainting > 0.4:
+			
+			# WAITAING -> WAITING. -> WAITING.. 
+			if self.updates_wainting > 0.1:
 				self.updates_wainting = 0
 				if waitingIndex >= len(waitingTab) - 1:
 					waitingIndex = 0
@@ -138,8 +145,10 @@ class Game:
 			global waitingIndex
 			global waitingTab
 			global testFont
-			label = testFont.render('Waiting' + waitingTab[waitingIndex], 1, (255,255,255))
-			frame.blit(label, (100, 100))
+
+			text = "Waiting" + waitingTab[waitingIndex]
+			rect = self.graphics.drawCenteredText(testFont, text, (0, 0, 0), frame.get_height() / 2 - testFont.get_height() / 2, False)
+			self.graphics.drawText3D(testFont, text, (140, 140, 140), (255, 255, 255), rect.topleft)
 
 		elif self.game_state == GameStates.IN_GAME:
 			self.world.update(SystemTypes.RENDER)

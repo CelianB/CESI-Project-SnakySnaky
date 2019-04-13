@@ -37,6 +37,21 @@ class SnakeBehaviourComponent(Component):
 		if len(self.position) > 1:
 			self.position.pop()
 
+	def growUp(self,direction):
+		newpos = self.position[-1][:]
+
+		if direction == SnakeDirection.UP:
+			newpos[1] += 1
+		elif direction == SnakeDirection.RIGHT:
+			newpos[0] -= 1
+		elif direction == SnakeDirection.DOWN:
+			newpos[1] -= 1
+		elif direction == SnakeDirection.LEFT:
+			newpos[0] += 1
+
+		# We insert item at first pos in array
+		self.position.append(newpos)
+
 	def update(self, direction):
 		self.addLength(direction)
 		self.removeLast()
