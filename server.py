@@ -1,105 +1,125 @@
+#Auteur : Nathan W.   / Adrien M.
+import socket
+import select
+import uuid
+import sys
+import traceback
+import json
 from resultObject import ResultObject
 from resultTreatment import ResultTreatment
 from assets.map import map_1
 
-import socket, sys
-from threading import Thread
-import pickle
-import random
-
+# Import snake directions
 from util.snake_direction import SnakeDirection
+
+from threading import Thread
+
 from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
 
-class ThreadClient(Thread):
-    def __init__(self, conn):
-        Thread.__init__(self)
-        self.connexion = conn
-        self.resend = True
-    
-    def treatMessage(self, connexion, msg):
-        if msg['type'] == 'move':
-            directionEnum = int(msg['direction'])
-            # myResultObject = process_input(dicoSocketClients[connexion], directionEnum)
-            # myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
-        elif msg['type'] == 'start':
-            msg_envoi = pickle.dumps({"type" : "start","position" :[random.randint(10,30),random.randint(10,30)],"direction" : random.randint(1,4)})
-            connexion.send(msg_envoi)
-        elif msg['type'] == 'quit':
-            print('Client is requesting to quit')
-            connexion.close()
-
-    def run(self):
-        nom = self.getName()
-        while 1:
-            msgClient = self.connexion.recv(1024)
-            try:
-                msgClient = pickle.loads(msgClient)
-                self.treatMessage(self.connexion,msgClient)
-            except:
-                self.resend = False
-            else:
-                self.resend = True
-
-            msgEnvoi = pickle.dumps(msgClient)
-            if self.resend == True:
-                for cle in conn_client:
-                    if cle != nom:
-                        conn_client[cle].send(msgEnvoi)
+server_running = True
+dicoSocketClients = {}
+client_index = 0
 
 
-        self.connexion.close()
-        del conn_client[nom]
-        print("Client {} déconnecté.".format(nom))
+def start_server():
+	global client_index
+	print('Initializing server')
+	host = config_general.getStr('ServerIP')
+	port = config_general.getInt('ServerPort')
 
-mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-try:
-    set = config_general.getStr('ServerIP')
-    mySocket.bind((config_general.getStr('ServerIP'), config_general.getInt('ServerPort')))
-except socket.error:
-    print("erreur")
-    sys.exit()
-print("connecté")
-mySocket.listen(5)
+	soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	print("Socket created")
+	try:
+		soc.bind((host, port))
+	except:
+		print("Bind failed. Error : " + str(sys.exc_info()))
+		sys.exit()
 
-conn_client = {}
-while 1:
-    connexion, adresse = mySocket.accept()
-    th = ThreadClient(connexion)
-    th.start()
-    it = th.getName()
-    conn_client[it] = connexion
-    print("Client {0} connecté, adresse IP : {1}, port  : {2}".format(it, adresse[0], adresse[1]))
+	soc.listen(5) # 5 connections max at the same time
+	print('Socket now listening...')
 
+	# Boucle infinie - ne se reset pas à chaques nouveaux clients
+	global dicoResultObject  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
+	
+	# Snakes dictionnary
+	#initialisation temporairement en dur des serpents
+	dicoResultObject = [1, [ [10,10], [10,11], [10,12], [10,13], [10,14] ] ]
+	dicoResultObject = [2, [ [20,10], [20,11], [20,12], [20,13], [20,14] ] ]
+	dicoResultObject = [3, [ [30,10], [30,11], [30,12], [30,13], [30,14] ] ]
+	dicoResultObject = [4, [ [40,10], [40,11], [40,12], [40,13], [40,14] ] ]
+	dicoResultObject = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
+
+
+	# Infinite while - Do not reset request
+	while server_running:
+		dem_connex, wlist, xlist = select.select([soc], [], [], 0.01)
+		for connexion in dem_connex:
+			recep, infos = connexion.accept()
+			client_index += 1
+			dicoSocketClients[recep] = client_index
+			print('Connected with: ' + str(infos))
+
+		clientsMAJ = []
+		try:
+			clientsMAJ, wlist, xlist = select.select(dicoSocketClients.keys(), [], [], 0.01)
+		except select.error:
+			pass
+		else:
+			try:
+				for client in clientsMAJ:
+					msg = client.recv(5120)
+					msg = json.loads(msg)
+					treatMessage(client, msg)
+					if len(msg.decode()) > 1:
+						print(msg.decode())
+			except:
+				pass
+
+	soc.close()
+	print('Closed')
+
+def treatMessage(connection, msg):
+	if msg['type'] == 'move':
+		directionEnum = int(msg['direction'])
+		myResultObject = process_input(dicoSocketClients[connection], directionEnum)
+		myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
+	elif msg['type'] == 'quit':
+		print('Client is requesting to quit')
+		connection.close()
 
 # Author : Adrien M
-# def process_input(id_client, directionEnum):
-# 	print("Processing the input received from client")
-# 	position = dicoResultObject[id_client].getPosition()
+def process_input(id_client, directionEnum):
+	print("Processing the input received from client")
+	position = dicoResultObject[id_client].getPosition()
 
-# 	# suivi du reste du serpent
-# 	if directionEnum != 0:
-        
-# 		i = len(position) - 1
+	#suivi du reste du serpent
+	if directionEnum != 0:
+		
+		i = len(position) - 1
 
-# 		while i != 0:
+		while i != 0:
 
-# 			position[i] = position[i-1]
-# 			i-=1
+			position[i] = position[i-1]
+			i-=1
 
-# 	# déplacement en nouvelle position de tête
-# 	if directionEnum == 1:
-# 		position[0][1] += 1
+	#déplacement en nouvelle position de tête
+	if directionEnum == 1:
+		position[0][1] += 1
 
-# 	if directionEnum == 2:
-# 		position[0][1] -= 1
+	if directionEnum == 2:
+		position[0][1] -= 1
 
-# 	if directionEnum == 3:
-# 		position[0][0] -= 1
+	if directionEnum == 3:
+		position[0][0] -= 1
 
-# 	if directionEnum == 4:
-# 		position[0][0] += 1
+	if directionEnum == 4:
+		position[0][0] += 1
 
-# 	dicoResultObjet[id_client].setPosition
-# 	return ResultObject(dicoResultObject[id_client].name, position, True, dicoResultObject[id_client].score)
+	#dicoResultObjet[id_client].setPosition
+	return ResultObject(dicoResultObject[id_client].name, position, True, dicoResultObject[id_client].score)
+
+
+if __name__ == "__main__":
+	start_server()
