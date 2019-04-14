@@ -1,14 +1,15 @@
 #Auteur : Adrien M.
 
-class ResultObject(object):
+class SnakeObject(object):
 
     #Constructeur
-    def __init__(self, name, position, alive, score):
+    def __init__(self, name, position, alive, score, direction):
 
         self.name = name
         self.position = position
         self.alive = alive
         self.score = score
+        self.direction = direction
     
     #getters setters
     def getName(self):

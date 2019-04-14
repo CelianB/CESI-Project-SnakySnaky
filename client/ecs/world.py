@@ -44,7 +44,7 @@ class World:
 			self.systems_types[system_type].append(system)
 
 	def update(self, system_type: SystemTypes):
-		print('World:update')
+		# print('World:update')
 		if system_type in self.systems_types:
 			for s in self.systems_types[system_type]:
 				s.run()

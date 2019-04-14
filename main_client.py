@@ -16,7 +16,7 @@ event_bus = EventBus()
 win = Window(config_general.getStr('Title'), config_general.getInt('ScreenWidth'), config_general.getInt('ScreenHeight'), 10, event_bus=event_bus)
 
 # Create game
-game = Game(win, event_bus)
+game = Game(win, event_bus,config_general.getInt('MapSize'))    
 
 # Run game
 win.run(input=game.on_input, update=game.on_update, render=game.on_render)

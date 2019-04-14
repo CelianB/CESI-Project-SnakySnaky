@@ -3,10 +3,9 @@ from .Component import Component
 from util.snake_direction import SnakeDirection
 
 class SnakeBehaviourComponent(Component):
-	def __init__(self, graphics):
-		self.position = [
-			[25,25],[26,25],[27,25],[28,25],[29,25],[30,25],[31,25]
-		]
+	def __init__(self, graphics, position, direction):
+		self.position = [position]
+
 		self.sprites = {
 			'corner_left_top'  : graphics.loadImage('corner_left_top.png'),
 			'corner_right_top' : graphics.loadImage('corner_right_top.png'),
@@ -36,6 +35,21 @@ class SnakeBehaviourComponent(Component):
 		# We remove the last item if there is more than one
 		if len(self.position) > 1:
 			self.position.pop()
+
+	def growUp(self,direction):
+		newpos = self.position[-1][:]
+		if direction == SnakeDirection.UP.value:
+			newpos[1] += 1
+		elif direction == SnakeDirection.RIGHT.value:
+			newpos[0] -= 1
+		elif direction == SnakeDirection.DOWN.value:
+			newpos[1] -= 1
+		elif direction == SnakeDirection.LEFT.value:
+			newpos[0] += 1
+
+		# We insert item at first pos in array
+		self.position.append(newpos)
+
 
 	def update(self, direction):
 		self.addLength(direction)

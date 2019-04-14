@@ -5,26 +5,26 @@ import uuid
 import sys
 import traceback
 import json
-from resultObject import ResultObject
-from resultTreatment import ResultTreatment
+from types import SimpleNamespace as Namespace
+import random
+
+from snakeObject import SnakeObject
 from assets.map import map_1
+from protocolSerialization import ProtocolSerialization
+from client.ecs.components import TerrainComponent
 
 # Import snake directions
 from util.snake_direction import SnakeDirection
 
-from threading import Thread
 
 from util.config_mgmt import ConfigHandler
 
 config_general = ConfigHandler('configs', False, 'config.ini', '')
-
+protocolSerialization = ProtocolSerialization()
 server_running = True
-dicoSocketClients = {}
-client_index = 0
-
+snakes = []
 
 def start_server():
-	global client_index
 	print('Initializing server')
 	host = config_general.getStr('ServerIP')
 	port = config_general.getInt('ServerPort')
@@ -33,93 +33,59 @@ def start_server():
 	print("Socket created")
 	try:
 		soc.bind((host, port))
+		soc.listen(5)
+		print("Le serveur écoute")
 	except:
 		print("Bind failed. Error : " + str(sys.exc_info()))
 		sys.exit()
 
-	soc.listen(5) # 5 connections max at the same time
-	print('Socket now listening...')
-
-	# Boucle infinie - ne se reset pas à chaques nouveaux clients
-	global dicoResultObject  #dico pour stocker les classes resultObjet (ou snakes) avec l'id client en clef
-	
-	# Snakes dictionnary
-	#initialisation temporairement en dur des serpents
-	dicoResultObject = [1, [ [10,10], [10,11], [10,12], [10,13], [10,14] ] ]
-	dicoResultObject = [2, [ [20,10], [20,11], [20,12], [20,13], [20,14] ] ]
-	dicoResultObject = [3, [ [30,10], [30,11], [30,12], [30,13], [30,14] ] ]
-	dicoResultObject = [4, [ [40,10], [40,11], [40,12], [40,13], [40,14] ] ]
-	dicoResultObject = [5, [ [50,10], [50,11], [50,12], [50,13], [50,14] ] ]
-
-
-	# Infinite while - Do not reset request
-	while server_running:
-		dem_connex, wlist, xlist = select.select([soc], [], [], 0.01)
-		for connexion in dem_connex:
-			recep, infos = connexion.accept()
-			client_index += 1
-			dicoSocketClients[recep] = client_index
-			print('Connected with: ' + str(infos))
-
-		clientsMAJ = []
+	connected_clients = []
+	while True:
+	    # Check es nouvelles connexions éventuelles (toutes les 50ms)
+		connexions_request, wlist, xlist = select.select([soc],[], [], 0.05)
+		for connexion in connexions_request:
+			conn, infos_connexion = connexion.accept()
+	        # On ajoute le socket connecté à la liste des clients
+			connected_clients.append(conn)
+		clients = []
 		try:
-			clientsMAJ, wlist, xlist = select.select(dicoSocketClients.keys(), [], [], 0.01)
+			clients, wlist, xlist = select.select(connected_clients,[], [], 0.05)
 		except select.error:
 			pass
 		else:
-			try:
-				for client in clientsMAJ:
-					msg = client.recv(5120)
-					msg = json.loads(msg)
-					treatMessage(client, msg)
-					if len(msg.decode()) > 1:
-						print(msg.decode())
-			except:
-				pass
+			for client in clients:
+				data = client.recv(1024)
+				treatMessage(client, data.decode())
 
-	soc.close()
-	print('Closed')
 
 def treatMessage(connection, msg):
-	if msg['type'] == 'move':
-		directionEnum = int(msg['direction'])
-		myResultObject = process_input(dicoSocketClients[connection], directionEnum)
-		myResultTreatment = ResultTreatment(map, dicoResultObject, myResultObject)
-	elif msg['type'] == 'quit':
+	msg = json.loads(msg,object_hook=lambda d: Namespace(**d))
+	if msg.type == 'move':
+		test = snakeUpdate(msg)
+		msg_envoi = protocolSerialization.ServerMoveMessage(test)
+		connection.send(msg_envoi.encode())
+	elif msg.type == 'start':
+		msg_envoi = protocolSerialization.ServerStratMessage([random.randint(10,30),random.randint(10,30)],random.randint(1,4))
+		connection.send(msg_envoi.encode())
+	elif msg.type == 'quit':
 		print('Client is requesting to quit')
+		print(msg['id'])
 		connection.close()
 
-# Author : Adrien M
-def process_input(id_client, directionEnum):
-	print("Processing the input received from client")
-	position = dicoResultObject[id_client].getPosition()
-
-	#suivi du reste du serpent
-	if directionEnum != 0:
-		
-		i = len(position) - 1
-
-		while i != 0:
-
-			position[i] = position[i-1]
-			i-=1
-
-	#déplacement en nouvelle position de tête
-	if directionEnum == 1:
-		position[0][1] += 1
-
-	if directionEnum == 2:
-		position[0][1] -= 1
-
-	if directionEnum == 3:
-		position[0][0] -= 1
-
-	if directionEnum == 4:
-		position[0][0] += 1
-
-	#dicoResultObjet[id_client].setPosition
-	return ResultObject(dicoResultObject[id_client].name, position, True, dicoResultObject[id_client].score)
-
+def snakeUpdate(msg):
+	currentSnake = SnakeObject(msg.id, msg.position, True, 42, msg.direction)
+	ind =0
+	# Cherche si le snake existe déjà
+	for snk in snakes:
+		if snk.name == currentSnake.name:
+			del snakes[ind]
+		ind = ind + 1		
+	snakes.append(currentSnake)
+	for snake in snakes:
+		if(snake.position[0][0] < 2 or snake.position[0][0] > config_general.getInt('MapSize') - 2 
+		or snake.position[0][1] < 2 or snake.position[0][1] > config_general.getInt('MapSize') - 2):
+			snake.alive = False
+	return snakes
 
 if __name__ == "__main__":
 	start_server()

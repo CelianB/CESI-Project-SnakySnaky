@@ -1,6 +1,7 @@
 # Auteurs : Celian B. & Nathan W.
 from util.config_mgmt import ConfigHandler
 import socket
+import uuid
 
 class Networking:
 #Recuperation des valeurs de configuration du serveur
@@ -11,19 +12,16 @@ class Networking:
     def __init__(self, event_bus):
         self.event_bus = event_bus
         try:
-            #Debut Connecxion au serveur
-            print("- Ready")
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print("- Socket initialized")
             self.s.connect((self.host, self.port))
             print("- Socket connected to server")
-            #Fin de connexion au serveur
             self.started = True
+            self.id = uuid.uuid4().hex
+
         except:
             self.started = False
             print("Serveur not started")
 
     def send(self, data):
         if self.started:
-            print("Sent date" + str(data))
             self.s.send(str(data).encode())

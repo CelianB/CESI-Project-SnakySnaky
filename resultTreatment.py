@@ -3,7 +3,6 @@
 class ResultTreatment():
     
     """Classe de traitement des demandes client et calcul du résultat"""
-
     #Constructeur
     def __init__(self, arene, dicoResultObjet, myResultObjet):
 
