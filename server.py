@@ -82,9 +82,9 @@ def snakeUpdate(msg):
 	snakes.append(currentSnake)
 	for snake in snakes:
 		# bords de map
-		# if(snake.position[0][0] < 2 or snake.position[0][0] > config_general.getInt('MapSize') - 2
-		# or snake.position[0][1] < 2 or snake.position[0][1] > config_general.getInt('MapSize') - 2):
-		# 	# snake.alive = False
+		if(snake.position[0][0] < 2 or snake.position[0][0] > config_general.getInt('MapSize') - 2
+		or snake.position[0][1] < 2 or snake.position[0][1] > config_general.getInt('MapSize') - 2):
+		 	snake.alive = False
 
 		# avec un snake (dont lui même)
 		for snakeToCheck in snakes:
