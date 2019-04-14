@@ -1,13 +1,4 @@
-# Objectif
-Jeu de snake multijoueurs réalisé lors du cours de python dans le cadre de notre formation en tant que Responsable en Ingenierie des logiciels au CESI de Nancy.
+DEMO 
+Basic multiplayer snake game using ECS design patern and socket for the network interactions
 
-Membres du projet :
-* Florian Hervieux
-* Celian Bastien
-* Meddy Richard
-* Adrien Marini
-* Nathan Wilcké
-
-#### Install python modules
-`python -m pip install -r requirements.txt`
-
+![Alt Text](./doc/demo.gif)
