@@ -55,7 +55,7 @@ class Window:
 				self.on_input(event)
 
 			# TODO: calculate delta time
-			self.on_update(self.fps_target / 1000)
+			self.on_update(self.fps_target / 1)
 
 			# Clear frame
 			self.frame.fill((0, 0, 0))

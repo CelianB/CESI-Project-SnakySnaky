@@ -4,5 +4,6 @@ function startClient {
         pythonw '.\main_client.py'     
     }  
 }  
-pip install -r requirements.txt 
-python .\server.py | startClient
+# pip install -r requirements.txt
+# python .\server.py | 
+startClient

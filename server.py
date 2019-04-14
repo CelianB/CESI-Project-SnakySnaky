@@ -78,12 +78,21 @@ def snakeUpdate(msg):
 	for snk in snakes:
 		if snk.name == currentSnake.name:
 			del snakes[ind]
-		ind = ind + 1		
+		ind = ind + 1
 	snakes.append(currentSnake)
 	for snake in snakes:
-		if(snake.position[0][0] < 2 or snake.position[0][0] > config_general.getInt('MapSize') - 2 
-		or snake.position[0][1] < 2 or snake.position[0][1] > config_general.getInt('MapSize') - 2):
-			snake.alive = False
+		# bords de map
+		# if(snake.position[0][0] < 2 or snake.position[0][0] > config_general.getInt('MapSize') - 2
+		# or snake.position[0][1] < 2 or snake.position[0][1] > config_general.getInt('MapSize') - 2):
+		# 	# snake.alive = False
+
+		# avec un snake (dont lui même)
+		for snakeToCheck in snakes:
+			ind = 0
+			if(snakeToCheck.name != snake.name):
+				for x in range(ind,len(snakeToCheck.position)):
+					if(snake.position[0] == snakeToCheck.position[x]):
+						snake.alive = False
 	return snakes
 
 if __name__ == "__main__":
