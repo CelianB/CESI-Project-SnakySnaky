@@ -53,7 +53,7 @@ class Game:
 			# snake entity creation
 			self.snake = self.world.createEntity(Vector2(20, 20))
 			self.snake.assign(SpriteRendererComponent(self.graphics, 'mini_snake.png'))
-			self.snake.assign(SnakeMovementComponent())
+			self.snake.assign(SnakeMovementComponent(SnakeDirection.LEFT))
 			self.snake.assign(SnakeBehaviourComponent(self.graphics,initialPosition.position,initialPosition.direction))
 			mySnakeBehave = self.snake.get(SnakeBehaviourComponent)
 			mySnakeMovement = self.snake.get(SnakeMovementComponent)
@@ -93,21 +93,18 @@ class Game:
 		snake_movement.setDirection(SnakeDirection.RIGHT)
 
 	def processUpdate(self,snakes):
-		print(snakes)
 		snakes = json.loads(snakes,object_hook=lambda d: Namespace(**d))
 		for snake in snakes:
 			if(snake.id == self.networking.id):
 				if(snake.alive == False):
 					self.game_state = GameStates.DEAD
-			# else:
-				# ind = 0
-				# for otherSnake in self.other_snakes:
-				# 	if(snake.id == otherSnake.id):
-				# 		del self.other_snakes[ind]
-				# 		return
-				# 	ind = ind + 1
-				# obj = {"id":snake.id,"position":snake.position,"direction":snake.direction,"score":snake.score}
-				# self.other_snakes.append({"id":snake.id,"position":snake.position,"direction":snake.direction,"score":snake.score})
+			else:
+				ind = 0
+				for otherSnake in self.other_snakes:
+					if(snake.id == otherSnake["id"]):
+						del self.other_snakes[ind]
+					ind = ind + 1
+				self.other_snakes.append({"id":snake.id,"position":snake.position,"direction":snake.direction,"score":snake.score})
 
 	def on_input(self, event):
 		if event.type == QUIT:
@@ -216,9 +213,10 @@ class Game:
 				drawSnake(behaviour_cmp.position,movement_cmp,behaviour_cmp)
 			self.world.get(onEachSpriteRenderer, components=[TransformComponent, SnakeMovementComponent, SnakeBehaviourComponent, SpriteRendererComponent])
 			
-			# for otherSnake in self.other_snakes :
-			# 	behave = SnakeMovementComponent(self.graphics,otherSnake.direction)
-			# 	drawSnake(otherSnake.position,behave)
+			for otherSnake in self.other_snakes :
+				direction = SnakeMovementComponent(otherSnake['direction'])
+				behaviour = SnakeBehaviourComponent(self.graphics,otherSnake['position'],otherSnake['direction'])
+				drawSnake(otherSnake['position'],direction,behaviour)
 
 			def onEachItemRenderer(entity, transform_cmp, sprite_renderer_com, item_cmp):
 				x, y = transform_cmp.getPosition()

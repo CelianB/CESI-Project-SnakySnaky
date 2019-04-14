@@ -3,12 +3,23 @@ from .Component import Component
 from util.snake_direction import SnakeDirection
 
 class SnakeMovementComponent(Component):
-	def __init__(self, direction: SnakeDirection=SnakeDirection.LEFT):
-		self.direction = direction
+	def __init__(self, direction):
+		if(isinstance(direction, int)):
+			if direction == 0:
+				self.direction = SnakeDirection.NONE
+			elif direction == 1:
+				self.direction = SnakeDirection.UP
+			elif direction == 2:
+				self.direction = SnakeDirection.DOWN
+			elif direction == 3:
+				self.direction = SnakeDirection.LEFT
+			else:
+				self.direction = SnakeDirection.RIGHT
+		else:
+			self.direction = direction
 
 	def setDirection(self, direction):
 		self.direction = direction
-
 	def getDirection(self):
 		return self.direction
 

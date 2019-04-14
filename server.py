@@ -69,7 +69,6 @@ def treatMessage(connection, msg):
 		connection.send(msg_envoi.encode())
 	elif msg.type == 'quit':
 		print('Client is requesting to quit')
-		print(msg['id'])
 		connection.close()
 
 def snakeUpdate(msg):

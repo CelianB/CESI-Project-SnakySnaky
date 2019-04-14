@@ -20,12 +20,10 @@ class ProtocolSerialization:
         snakesObj = []
         for snake in snakes:
              snakesObj.append({"id":snake.name,"position":snake.position,"alive":snake.alive,"score":snake.score,"direction" :snake.direction})
-        snakesObj.append({"id":"654654","position":[[10,10],[10,11],[10,12],[10,14],[10,15]],"alive":True,"score":0,"direction" :3})
-        # snakesObj.append({"id":"654654","position":[[12,10],[12,11],[12,12],[12,14],[12,15]],"alive":True,"score":0,"direction" :4})
+        snakesObj.append({"id":"654654","position":[[10,10],[10,11],[10,12],[10,13],[10,14]],"alive":True,"score":0,"direction" :1})
+        snakesObj.append({"id":"987","position":[[12,14],[12,13],[12,12],[12,11],[12,10]],"alive":True,"score":0,"direction" :2})
         # snakesObj.append({"id":"654654","position":[[0,20],[1,20],[2,20],[3,20],[4,20]],"alive":True,"score":0,"direction" :1})
-        out = json.dumps(snakesObj)
-        print(out)
-        return out
+        return json.dumps(snakesObj)
 
     def ClientMoveMessage(self,id,position,direction):
         print("Client moved. Id : " +id+ " Head : "+str(position[0]))
